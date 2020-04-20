@@ -1,0 +1,10 @@
+version: "3.5"
+
+services:
+  th_frontend_prod:
+    container_name: "th_frontend_prod"
+    build:
+      context: .
+      dockerfile: frontend.dockerfile
+    ports:
+      - "9000:3000"
