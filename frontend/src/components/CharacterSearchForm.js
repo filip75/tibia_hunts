@@ -26,7 +26,7 @@ class CharacterSearchForm extends Component {
             <form onClick={this.handleSubmit}>
                 <label htmlFor="name">character name</label>
                 <input type="text" name="name" onInput={this.handleInput} value={this.state.name}/>
-                <button>search</button>
+                <button className="btn btn-primary">search</button>
             </form>
         )
     }

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 import CharacterSearchForm from "./CharacterSearchForm";
+import './CharacterDetail.css';
 
 let c = {
     "characters": {
@@ -70,68 +71,115 @@ class CharacterDetail extends Component {
             })
     };
 
+    vocationImage = (vocation) => {
+        vocation = vocation.split(" ").slice(-1)[0].toLowerCase();
+        let source = "static/vocations/default.png";
+        if (["druid", "knight", "paladin", "sorcerer"].includes(vocation)) {
+            source = `static/vocations/${vocation}.png`;
+        }
+        return <img src={source} alt={`${vocation} image`}/>
+    };
+
+    characterInfo = (character) => {
+        return (
+            <table className="table table-sm table-borderless table-striped characterDetailTable">
+                <thead>
+                <h4 className="text-center">
+                    {this.vocationImage(character.data.vocation)}
+                    {character.data.name}
+                </h4>
+                </thead>
+                <tbody className="text-left">
+                <tr>
+                    <th scope="col">vocation</th>
+                    <td>{character.data.vocation}</td>
+                </tr>
+                <tr>
+                    <th scope="col">level</th>
+                    <td>
+                        {character.data.level}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="col">level range</th>
+                    <td>
+                        {Math.ceil(character.data.level / 1.5)}
+                        -
+                        {Math.floor(character.data.level * 1.5)}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="col">has premium</th>
+                    <td>
+                        {character.data.account_status === "Free Account" ?
+                            "no" :
+                            "yes"
+                        }
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        )
+    };
+
+    otherCharacters = (character) => {
+        let otherCharacters = character.other_characters.filter(c => {
+            return c.name !== character.data.name
+        });
+        if (otherCharacters.length === 0)
+            return null;
+        else {
+            return (
+                <div>
+                    <h6 className="text-center">Other characters</h6>
+                    <table className="table table-sm table-borderless characterDetailTable">
+                        <thead className="text-left">
+                        <tr>
+                            <th>name</th>
+                            <th>world</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {otherCharacters.map((c) => {
+                            return (
+                                <tr className="text-left">
+                                    <td>{c.name}</td>
+                                    <td>{c.world}</td>
+                                </tr>
+                            )
+                        })}
+                        </tbody>
+                    </table>
+                </div>
+            )
+        }
+    };
+
     render() {
-        let characterInfo = null;
+        let characterData = null;
         if (this.state.character) {
             if (this.state.character.hasOwnProperty("error")) {
-                characterInfo = <p>Character not found</p>
+                characterData = <p>Character not found</p>
             } else {
-                characterInfo = (
+                characterData = (
                     <div>
-                        <table className="table">
-                            <tr>
-                                <th scope="col">name</th>
-                                <td>{this.state.character.data.name}</td>
-                            </tr>
-                            <tr>
-                                <th scope="col">vocation</th>
-                                <td>{this.state.character.data.vocation}</td>
-                            </tr>
-                            <tr>
-                                <th scope="col">level</th>
-                                <td>
-                                    {this.state.character.data.level}
-                                    <small>
-                                        &nbsp;
-                                        {Math.ceil(this.state.character.data.level / 1.5)}
-                                        -
-                                        {Math.floor(this.state.character.data.level * 1.5)}
-                                    </small>
-                                </td>
-                            </tr>
-                        </table>
-                        <table className="table">
-                            <thead>
-                            <tr className="text-left">
-                                <th>name</th>
-                                <th>world</th>
-                                <th>status</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {this.state.character.other_characters.map((character) => {
-                                return (
-                                    <tr className="text-left">
-                                        <td>{character.name}</td>
-                                        <td>{character.world}</td>
-                                        <td>{character.status}</td>
-                                    </tr>
-                                )
-                            })}
-                            </tbody>
-                        </table>
+                        {this.characterInfo(this.state.character)}
+                        <hr/>
+                        {this.otherCharacters(this.state.character)}
                     </div>
                 )
             }
         } else if (this.state.loading) {
-            characterInfo = <p>Loading...</p>
+            characterData = <p>Loading...</p>
         } else if (this.state.error) {
-            characterInfo = <p>Error</p>
+            characterData = <p>Error</p>
         }
         return (
-            <div className="container">
-                <div className="col-md-5">
-                    {characterInfo}
+            <div className="container table-striped">
+                <div className="col-md-8">
+                    <div>
+                        {characterData}
+                    </div>
                     <CharacterSearchForm searchCallback={this.searchCharacter}/>
                 </div>
             </div>
