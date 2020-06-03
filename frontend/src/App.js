@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.scss';
-import CharacterDetail from "./components/CharacterDetail";
+import TeamCreator from "./components/TeamCreator";
 
 function App() {
     return (
         <div className="App">
-            <CharacterDetail/>
+            <TeamCreator/>
         </div>
     );
 }
