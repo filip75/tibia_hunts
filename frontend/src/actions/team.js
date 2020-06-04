@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {areOnTheSameWorld, characterWasFound, getLevelRange, getWorld, isTeamMember} from "../model/character";
-import {fetchWorld, setCurrentWorld} from "./worldsData";
+import {fetchWorld, setCurrentWorld} from "./worlds";
+import {fetchCharacter} from "./characters";
 
 export const ADD_TO_TEAM = "ADD_TO_TEAM";
 export const REMOVE_FROM_TEAM = "REMOVE_FROM_TEAM";
