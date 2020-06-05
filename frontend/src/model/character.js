@@ -1,5 +1,3 @@
-import React from "react";
-
 export const VOCATION = {
     DRUID: "druid",
     KNIGHT: "knight",
@@ -13,7 +11,7 @@ export const hasPromotion = (vocation) => {
 
 export const isTeamMember = (team, name) => {
     return team.map(member => {
-        return member.data.name.toLowerCase()
+        return member.toLowerCase()
     }).includes(name.toLowerCase());
 };
 
@@ -22,11 +20,12 @@ export const characterWasFound = (character) => {
 };
 
 export const areOnTheSameWorld = (characters) => {
-    return new Set(characters.map(character => character.data.world)).size === 1;
+    const worldCount = new Set(characters.map(character => character.data.world)).size;
+    return worldCount === 0 || worldCount === 1;
 };
 
 export const getWorld = (characters) => {
-    if (areOnTheSameWorld(characters)) {
+    if (characters.length > 0 && areOnTheSameWorld(characters)) {
         return characters[0].data.world;
     } else {
         return null;
@@ -54,5 +53,7 @@ export const getLevelRange = (characters) => {
 
 export const areCharactersCompatible = (characters) => {
     const levelRange = getLevelRange(characters);
-    return levelRange[0] <= levelRange[1];
+    return characters.every((character) => {
+        return levelRange[0] <= character.data.level && character.data.level <= levelRange[1];
+    });
 };

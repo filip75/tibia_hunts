@@ -19,26 +19,28 @@ class AddTeamMemberForm extends Component {
 
     handleInput = (event) => {
         this.setState({
-            [event.target.name]: event.target.value
+            [event.target.id]: event.target.value
         })
     };
 
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
-                <label htmlFor="name">character name</label>
-                <input type="text" name="name" onInput={this.handleInput} value={this.state.name}/>
+                <div className="form-group">
+                    <label htmlFor="name">character name</label>
+                    <input class="form-control" type="text" id="name" onChange={this.handleInput}
+                           value={this.state.name}/>
+                </div>
                 <button className="btn btn-primary">Add</button>
             </form>
         )
     }
 }
 
-
 const mapDispatchToProps = (dispatch) => {
     return {
         callback: name => {
-            dispatch(fetchTeamMember(name))
+            dispatch(fetchTeamMember(name, true))
         }
     }
 };

@@ -30,19 +30,3 @@ export const shouldFetch = (data, key, lifeTime = 60 * 1000) => {
         return true;
     return Date.now() - data[key].timestamp > lifeTime;
 };
-
-// export const createFetchAction = (actionName, fetch, key, lifeTime) => {
-//     return (dispatch, getState) => {
-//         if (shouldFetch()) {
-//             fetch(
-//                 dispatch,
-//                 getState,
-//                 (data) => dispatch({
-//                     type: actionName,
-//                     key: key,
-//                     data: data
-//                 })
-//             );
-//         }
-//     };
-// };

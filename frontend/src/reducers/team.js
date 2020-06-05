@@ -1,14 +1,14 @@
 import {combineReducers} from "redux";
-import {ADD_TEAM_MESSAGE, ADD_TO_TEAM, REMOVE_FROM_TEAM, SET_LEVEL_RANGE} from "../actions/team";
+import {SET_TEAM_MESSAGES, ADD_MEMBER, REMOVE_MEMBER, SET_LEVEL_RANGE} from "../actions/team";
 
 
 const members = (characters = [], action) => {
     switch (action.type) {
-        case ADD_TO_TEAM:
-            return [...characters, action.name];
-        case REMOVE_FROM_TEAM:
+        case ADD_MEMBER:
+            return [...characters, action.name.toLowerCase()];
+        case REMOVE_MEMBER:
             return characters.filter(character => {
-                return character.data.name !== action.name
+                return character !== action.name.toLowerCase();
             });
         default:
             return characters
@@ -22,11 +22,11 @@ const levelRange = (levelRange = [0, 2000], action) => {
     return levelRange;
 };
 
-const message = (m = "", action) => {
-    if (action.type === ADD_TEAM_MESSAGE) {
-        return action.message;
+const messages = (m = [], action) => {
+    if (action.type === SET_TEAM_MESSAGES) {
+        return action.messages;
     }
     return m;
 };
 
-export default combineReducers({members, message, levelRange});
+export default combineReducers({members, messages, levelRange});

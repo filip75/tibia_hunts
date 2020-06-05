@@ -17,11 +17,10 @@ const filterVocationAndLevel = (characters, vocation, levelMin, levelMax) => {
 const VocationList = ({characters, fetchCharacter}) => {
     return (
         <table className="w-100">
+            <tbody>
             {characters.map((character) => {
                 return (
-                    // <div className={hasPromotion(character.vocation) ? null : "text-muted"}>
-                    // {`banner ${active ? "active" : ""}`}
-                    <tr className={`border rounded mb-2 ${!hasPromotion(character.vocation) ? "text-muted" : null}`}>
+                    <tr key={character.name} className={`border rounded mb-2 ${!hasPromotion(character.vocation) ? "text-muted" : null}`}>
                         <td>
                             {character.name}
                         </td>
@@ -38,15 +37,13 @@ const VocationList = ({characters, fetchCharacter}) => {
                             <div className="mx-2 d-inline-block" onClick={() => alert()}>
                                 {clipboardButton}
                             </div>
-                            <div className="mx-2 d-inline-block" onClick={() => alert()}>
+                            <div className="mx-2 d-inline-block" onClick={() => fetchCharacter(character.name)}>
                                 {infoButton}
                             </div>
-                            {/*<button className="btn btn-primary"*/}
-                            {/*        onClick={() => fetchCharacter(character.name)}>more info*/}
-                            {/*</button>*/}
                         </td>
                     </tr>)
             })}
+            </tbody>
         </table>
     )
 };
@@ -64,12 +61,9 @@ const TeamCandidates = ({currentWorld, worlds, levelRange, fetchCharacter}) => {
         sorcerers = filterVocationAndLevel(players, VOCATION.SORCERER, levelRange[0], levelRange[1]);
     }
     return (
-        <div className="overflow-auto">
+        <div>
             <p>Druids</p>
-            <button data-toggle="collapse" data-target="#druids">less</button>
-            <div id="druids" className="collapse show">
-                <VocationList characters={druids} fetchCharacter={fetchCharacter}/>
-            </div>
+            <VocationList characters={druids} fetchCharacter={fetchCharacter}/>
             <p>Knight</p>
             <VocationList characters={knights} fetchCharacter={fetchCharacter}/>
             <p>Paladins</p>
