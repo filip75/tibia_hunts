@@ -6,10 +6,10 @@ const TeamCreator = () => {
     return (
         <div className="container">
             <div className="row">
-                <div className="col-md-4">
+                <div className="col-md-6">
                     <Team/>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-6">
                     <TeamCandidates/>
                 </div>
             </div>

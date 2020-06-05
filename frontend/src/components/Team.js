@@ -4,21 +4,18 @@ import AddTeamMemberForm from "./AddTeamMemberForm";
 import {removeFromTeam} from "../actions/team";
 import {getLevelRange, vocationImageSource} from "../model/character";
 
-const TeamMember = ({member}) => {
 
-    return (
-        <div className="teamMember">
-            {vocationImageSource(member)}
-            <p>{member.data.name}</p>
-
-        </div>
-    );
-};
-
-const Team = ({message, teamMembers, removeTeamMember}) => {
+const Team = ({messages, teamMembers, removeTeamMember}) => {
     return (
         <div>
-            <p>{message}</p>
+            <AddTeamMemberForm/>
+            <ul>{messages.map((message) => {
+                return (
+                    <li>
+                        {message}
+                    </li>
+                );
+            })}</ul>
             {
                 teamMembers ?
                     teamMembers.map(member => {
@@ -26,7 +23,7 @@ const Team = ({message, teamMembers, removeTeamMember}) => {
                         return (
                             <div className="row mx-2 mb-2 border rounded" key={member.data.name}>
                                 <span className="align-self-center col-2">
-                                <img src={vocationImageSource(member)} alt="vocation image"/>
+                                <img src={vocationImageSource(member)} alt="vocation"/>
                                 </span>
                                 <span className="d-inline-block col-6">
                                     <span className="mx-2 my-0 d-block font-weight-bold">{member.data.name}</span>
@@ -39,7 +36,7 @@ const Team = ({message, teamMembers, removeTeamMember}) => {
                                     <span className="mx-2 my-0 d-block">{member.data.world}</span>
                                 </span>
                                 <div className="col-4 align-self-center">
-                                    <button className="btn btn-outline-danger w-100"
+                                    <button className="btn btn-outline-danger w-100 p-0"
                                             onClick={() => removeTeamMember(member.data.name)}>
                                         remove
                                     </button>
@@ -52,15 +49,19 @@ const Team = ({message, teamMembers, removeTeamMember}) => {
                     :
                     null
             }
-            <AddTeamMemberForm/>
         </div>
     )
 };
 
 const mapStateToProps = (state) => {
     return {
-        message: state.team.message,
-        teamMembers: state.team.members
+        messages: state.team.messages,
+        teamMembers: state.team.members.map((member) => {
+            if (state.characters.hasOwnProperty(member)) {
+                return state.characters[member].data;
+            }
+            return null;
+        })
     }
 };
 

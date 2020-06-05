@@ -8,10 +8,11 @@ import thunkMiddleware from 'redux-thunk'
 import {createLogger} from 'redux-logger'
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import team from './reducers/team'
-import worlds from "./reducers/worldsData";
+import worlds from "./reducers/worlds";
+import characters from "./reducers/characters"
 
 const loggerMiddleware = createLogger();
-const store = createStore(combineReducers({team, worlds}),
+const store = createStore(combineReducers({team, worlds, characters}),
     {},
     applyMiddleware(thunkMiddleware, loggerMiddleware)
 );

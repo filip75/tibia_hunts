@@ -1,7 +1,8 @@
 import React from "react";
 import {connect} from 'react-redux';
-import {fetchWorld} from "../actions/worldsData";
-import {getWorld, hasPromotion, VOCATION} from "../model/character";
+import {hasPromotion, VOCATION} from "../model/character";
+import {fetchCharacter} from "../actions/characters";
+import {addButton, clipboardButton, infoButton} from "../model/buttons";
 
 const filterVocationAndLevel = (characters, vocation, levelMin, levelMax) => {
     return characters.filter((character) => {
@@ -13,37 +14,47 @@ const filterVocationAndLevel = (characters, vocation, levelMin, levelMax) => {
     });
 };
 
-const VocationList = ({characters}) => {
+const VocationList = ({characters, fetchCharacter}) => {
     return (
-        <div>
+        <table className="w-100">
+            <tbody>
             {characters.map((character) => {
                 return (
-                    <div className={hasPromotion(character.vocation) ? null : "text-muted"}>
-                        <span className="w-25 mx-2">
+                    <tr key={character.name} className={`border rounded mb-2 ${!hasPromotion(character.vocation) ? "text-muted" : null}`}>
+                        <td>
                             {character.name}
-                        </span>
-                        <span className="w-25 mx-2">
+                        </td>
+                        <td>
                             {character.level}
-                        </span>
-                        <span className="w-25 mx-2">
+                        </td>
+                        <td>
                             {character.vocation}
-                        </span>
-                        <button className="btn btn-primary">add to team</button>
-                        <button className="btn btn-primary">copy name</button>
-                        <button className="btn btn-primary">more info</button>
-                    </div>)
+                        </td>
+                        <td>
+                            <div className="mx-2 d-inline-block" onClick={() => alert()}>
+                                {addButton}
+                            </div>
+                            <div className="mx-2 d-inline-block" onClick={() => alert()}>
+                                {clipboardButton}
+                            </div>
+                            <div className="mx-2 d-inline-block" onClick={() => fetchCharacter(character.name)}>
+                                {infoButton}
+                            </div>
+                        </td>
+                    </tr>)
             })}
-        </div>
+            </tbody>
+        </table>
     )
 };
 
-const TeamCandidates = ({currentWorld, worlds, levelRange}) => {
+const TeamCandidates = ({currentWorld, worlds, levelRange, fetchCharacter}) => {
     let druids = [];
     let knights = [];
     let paladins = [];
     let sorcerers = [];
     if (worlds[currentWorld] !== undefined) {
-        const players = worlds[currentWorld].players_online;
+        const players = worlds[currentWorld].data.players_online;
         druids = filterVocationAndLevel(players, VOCATION.DRUID, levelRange[0], levelRange[1]);
         knights = filterVocationAndLevel(players, VOCATION.KNIGHT, levelRange[0], levelRange[1]);
         paladins = filterVocationAndLevel(players, VOCATION.PALADIN, levelRange[0], levelRange[1]);
@@ -52,13 +63,13 @@ const TeamCandidates = ({currentWorld, worlds, levelRange}) => {
     return (
         <div>
             <p>Druids</p>
-            <VocationList characters={druids}/>
+            <VocationList characters={druids} fetchCharacter={fetchCharacter}/>
             <p>Knight</p>
-            <VocationList characters={knights}/>
+            <VocationList characters={knights} fetchCharacter={fetchCharacter}/>
             <p>Paladins</p>
-            <VocationList characters={paladins}/>
+            <VocationList characters={paladins} fetchCharacter={fetchCharacter}/>
             <p>Sorcerers</p>
-            <VocationList characters={sorcerers}/>
+            <VocationList characters={sorcerers} fetchCharacter={fetchCharacter}/>
         </div>
     );
 };
@@ -66,17 +77,16 @@ const TeamCandidates = ({currentWorld, worlds, levelRange}) => {
 const mapStateToProps = (state) => {
     return {
         currentWorld: state.worlds.currentWorld,
-        worlds: state.worlds.worldsData,
+        worlds: state.worlds.worldList,
         levelRange: state.team.levelRange
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchWorld: (name) => {
-            dispatch(fetchWorld(name));
-        }
+        fetchCharacter: name => dispatch(fetchCharacter(name))
     };
 };
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamCandidates);

@@ -7,6 +7,8 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
+    "jquery": "^3.5.1",
+    "popper.js": "^2.0.0-next.4",
     "bootstrap": "^4.5.0",
     "named-urls": "^2.0.0",
     "node-sass": "^4.14.1",
