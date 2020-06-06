@@ -1,4 +1,4 @@
-import {ADD_WORLD, SET_CURRENT_WORLD} from "../actions/worlds";
+import {ADD_WORLD, SET_CURRENT_WORLD, SET_WORLD_LOADING} from "../actions/worlds";
 import {combineReducers} from "redux";
 import {createCacheReducer} from "../model/cache";
 
@@ -11,4 +11,11 @@ const currentWorld = (worldName = null, action) => {
     return worldName;
 };
 
-export default combineReducers({worldList, currentWorld});
+const loading = (l = false, action) => {
+    if (action.type === SET_WORLD_LOADING) {
+        return action.loading;
+    }
+    return l;
+};
+
+export default combineReducers({worldList, currentWorld, loading});

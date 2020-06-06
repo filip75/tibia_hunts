@@ -27,11 +27,10 @@ class AddTeamMemberForm extends Component {
         return (
             <form onSubmit={this.handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="name">character name</label>
                     <input class="form-control" type="text" id="name" onChange={this.handleInput}
-                           value={this.state.name}/>
+                           value={this.state.name} placeholder="add new member"/>
                 </div>
-                <button className="btn btn-primary">Add</button>
+                <button className="btn btn-outline-primary w-100">Add</button>
             </form>
         )
     }

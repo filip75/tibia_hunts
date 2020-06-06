@@ -1,5 +1,5 @@
 import {combineReducers} from "redux";
-import {SET_TEAM_MESSAGES, ADD_MEMBER, REMOVE_MEMBER, SET_LEVEL_RANGE} from "../actions/team";
+import {SET_TEAM_MESSAGES, ADD_MEMBER, REMOVE_MEMBER, SET_LEVEL_RANGE, SET_TEAM_LOADING} from "../actions/team";
 
 
 const members = (characters = [], action) => {
@@ -29,4 +29,11 @@ const messages = (m = [], action) => {
     return m;
 };
 
-export default combineReducers({members, messages, levelRange});
+const loading = (l = false, action) => {
+    if (action.type === SET_TEAM_LOADING) {
+        return action.loading;
+    }
+    return l;
+};
+
+export default combineReducers({members, messages, levelRange, loading});

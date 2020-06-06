@@ -16,11 +16,12 @@ const filterVocationAndLevel = (characters, vocation, levelMin, levelMax) => {
 
 const VocationList = ({characters, fetchCharacter}) => {
     return (
-        <table className="w-100">
+        <table className="w-100 mb-4">
             <tbody>
             {characters.map((character) => {
                 return (
-                    <tr key={character.name} className={`border rounded mb-2 ${!hasPromotion(character.vocation) ? "text-muted" : null}`}>
+                    <tr key={character.name}
+                        className={`border rounded ${!hasPromotion(character.vocation) ? "text-muted" : null}`}>
                         <td>
                             {character.name}
                         </td>
@@ -48,7 +49,7 @@ const VocationList = ({characters, fetchCharacter}) => {
     )
 };
 
-const TeamCandidates = ({currentWorld, worlds, levelRange, fetchCharacter}) => {
+const TeamCandidates = ({currentWorld, worlds, levelRange, fetchCharacter, loading}) => {
     let druids = [];
     let knights = [];
     let paladins = [];
@@ -61,15 +62,31 @@ const TeamCandidates = ({currentWorld, worlds, levelRange, fetchCharacter}) => {
         sorcerers = filterVocationAndLevel(players, VOCATION.SORCERER, levelRange[0], levelRange[1]);
     }
     return (
-        <div>
-            <p>Druids</p>
-            <VocationList characters={druids} fetchCharacter={fetchCharacter}/>
-            <p>Knight</p>
-            <VocationList characters={knights} fetchCharacter={fetchCharacter}/>
-            <p>Paladins</p>
-            <VocationList characters={paladins} fetchCharacter={fetchCharacter}/>
-            <p>Sorcerers</p>
-            <VocationList characters={sorcerers} fetchCharacter={fetchCharacter}/>
+        <div className="border rounded">
+            <div className="m-2">
+                <h4>Team candidates</h4>
+                {loading ?
+                    <div className="row mx-2 mb-2 border rounded">
+                        <p className="my-auto py-2 ml-2">loading</p>
+                    </div>
+                    :
+                    null
+                }
+                {currentWorld ?
+                    <div>
+                        <h5>Druids</h5>
+                        <VocationList characters={druids} fetchCharacter={fetchCharacter}/>
+                        <h5>Knights</h5>
+                        <VocationList characters={knights} fetchCharacter={fetchCharacter}/>
+                        <h5>Paladins</h5>
+                        <VocationList characters={paladins} fetchCharacter={fetchCharacter}/>
+                        <h5>Sorcerers</h5>
+                        <VocationList characters={sorcerers} fetchCharacter={fetchCharacter}/>
+                    </div>
+                    :
+                    null
+                }
+            </div>
         </div>
     );
 };
@@ -78,7 +95,8 @@ const mapStateToProps = (state) => {
     return {
         currentWorld: state.worlds.currentWorld,
         worlds: state.worlds.worldList,
-        levelRange: state.team.levelRange
+        levelRange: state.team.levelRange,
+        loading: state.worlds.loading
     };
 };
 

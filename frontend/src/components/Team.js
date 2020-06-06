@@ -5,13 +5,14 @@ import {removeFromTeam} from "../actions/team";
 import {getLevelRange, vocationImageSource} from "../model/character";
 
 
-const Team = ({messages, teamMembers, removeTeamMember}) => {
+const Team = ({messages, teamMembers, removeTeamMember, loading}) => {
     return (
-        <div>
+        <div className="border rounded p-2">
+            <h4>Team members</h4>
             <AddTeamMemberForm/>
-            <ul>{messages.map((message) => {
+            <ul className="my-2">{messages.map((message) => {
                 return (
-                    <li>
+                    <li className="text-danger my-1">
                         {message}
                     </li>
                 );
@@ -40,14 +41,20 @@ const Team = ({messages, teamMembers, removeTeamMember}) => {
                                             onClick={() => removeTeamMember(member.data.name)}>
                                         remove
                                     </button>
-                                    <button className="btn btn-primary mt-1 w-100">info</button>
+                                    <button className="btn btn-outline-primary mt-1 w-100">info</button>
                                 </div>
-
                             </div>
                         )
                     })
                     :
                     null
+            }
+            {loading ?
+                <div className="row mx-2 mb-2 border rounded">
+                    <p className="my-auto py-2 ml-2">loading</p>
+                </div>
+                :
+                null
             }
         </div>
     )
@@ -61,7 +68,8 @@ const mapStateToProps = (state) => {
                 return state.characters[member].data;
             }
             return null;
-        })
+        }),
+        loading: state.team.loading
     }
 };
 

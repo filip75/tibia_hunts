@@ -8,6 +8,12 @@ export const ADD_MEMBER = "ADD_MEMBER";
 export const REMOVE_MEMBER = "REMOVE_MEMBER";
 export const SET_TEAM_MESSAGES = "SET_TEAM_MESSAGES";
 export const SET_LEVEL_RANGE = "SET_LEVEL_RANGE";
+export const SET_TEAM_LOADING = "SET_TEAM_LOADING";
+
+export const setTeamLoading = loading => ({
+    type: SET_TEAM_LOADING,
+    loading
+});
 
 export const addMember = name => ({
     type: ADD_MEMBER,
@@ -60,6 +66,7 @@ export const fetchTeamMember = name => (dispatch, getState) => {
         alert(`character ${name} is already member of the team`);
     } else {
         if (shouldFetch(getState().characters, name)) {
+            dispatch(setTeamLoading(true));
             axios.get(`https://api.tibiadata.com/v2/characters/${name}.json`)
                 .then((response) => {
                     if (characterWasFound(response.data)) {
@@ -69,9 +76,11 @@ export const fetchTeamMember = name => (dispatch, getState) => {
                     } else {
                         alert(`character ${name} not found`);
                     }
+                    dispatch(setTeamLoading(false));
                 })
                 .catch((error) => {
                     alert(`error while fetching character ${name} data`);
+                    dispatch(setTeamLoading(false));
                 });
         } else {
             dispatch(addMember(name));
