@@ -26,9 +26,8 @@ export const fetchWorld = (name, force = false) => (dispatch, getState) => {
         axios.get(`https://api.tibiadata.com/v2/world/${name}.json`)
             .then((response) => {
                 dispatch(addWorld(name, response.data.world));
-                dispatch(setWorldLoading(false));
             })
-            .catch((error) => {
+            .then(() => {
                 dispatch(setWorldLoading(false));
             });
     }

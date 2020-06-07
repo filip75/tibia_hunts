@@ -33,13 +33,18 @@ let VocationList = ({characters, fetchCharacter, addToTeam}) => {
                             {character.vocation}
                         </td>
                         <td>
-                            <div className="mx-2 d-inline-block float-right" onClick={() => addToTeam(character.name)}>
+                            <div data-toggle="tooltip" title="Add to team"
+                                 className="hover mx-2 d-inline-block float-right"
+                                 onClick={() => addToTeam(character.name)}>
                                 {addButton}
                             </div>
-                            <div className="mx-2 d-inline-block float-right" onClick={() => alert()}>
+                            <div data-toggle="tooltip" title="Copy name"
+                                 className="hover mx-2 d-inline-block float-right" onClick={() => alert()}>
                                 {clipboardButton}
                             </div>
-                            <div className="mx-2 d-inline-block float-right" onClick={() => fetchCharacter(character.name)}>
+                            <div data-toggle="tooltip" title="Show more info"
+                                 className="hover mx-2 d-inline-block float-right"
+                                 onClick={() => fetchCharacter(character.name)}>
                                 {infoButton}
                             </div>
                         </td>
@@ -60,16 +65,6 @@ const mapStateToDispatch = (dispatch) => {
 VocationList = connect(null, mapStateToDispatch)(VocationList);
 
 const TeamCandidates = ({levelRange, loading, candidates}) => {
-    let druids = [];
-    let knights = [];
-    let paladins = [];
-    let sorcerers = [];
-    if (candidates) {
-        druids = filterVocationAndLevel(candidates, VOCATION.DRUID, levelRange[0], levelRange[1]);
-        knights = filterVocationAndLevel(candidates, VOCATION.KNIGHT, levelRange[0], levelRange[1]);
-        paladins = filterVocationAndLevel(candidates, VOCATION.PALADIN, levelRange[0], levelRange[1]);
-        sorcerers = filterVocationAndLevel(candidates, VOCATION.SORCERER, levelRange[0], levelRange[1]);
-    }
     return (
         <div className="border rounded mt-2 mt-md-0">
             <div className="m-2">
@@ -83,14 +78,24 @@ const TeamCandidates = ({levelRange, loading, candidates}) => {
                 }
                 {candidates != null && !loading ?
                     <div>
-                        <h5>Druids</h5>
-                        <VocationList characters={druids}/>
-                        <h5>Knights</h5>
-                        <VocationList characters={knights}/>
-                        <h5>Paladins</h5>
-                        <VocationList characters={paladins}/>
-                        <h5>Sorcerers</h5>
-                        <VocationList characters={sorcerers}/>
+                        {Object.values(VOCATION).map((vocation) => {
+                            return (
+                                <div>
+                                    <h5 className="text-capitalize">
+                                        {`${vocation}s`}
+                                        <span className="hover vocationToggle text-secondary ml-2"
+                                              data-toggle="collapse"
+                                              data-target={`#${vocation}`}> toggle
+                                        </span>
+                                    </h5>
+                                    <div id={vocation} className="collapse show">
+                                        <VocationList
+                                            characters={filterVocationAndLevel(candidates, vocation, levelRange[0], levelRange[1])}/>
+                                    </div>
+                                </div>
+                            );
+
+                        })}
                     </div>
                     :
                     null

@@ -1,5 +1,12 @@
 import {combineReducers} from "redux";
-import {SET_TEAM_MESSAGES, ADD_MEMBER, REMOVE_MEMBER, SET_LEVEL_RANGE, SET_TEAM_LOADING} from "../actions/team";
+import {
+    SET_TEAM_MESSAGES,
+    ADD_MEMBER,
+    REMOVE_MEMBER,
+    SET_LEVEL_RANGE,
+    SET_TEAM_LOADING,
+    CLEAR_TEAM
+} from "../actions/team";
 
 
 const members = (characters = [], action) => {
@@ -10,8 +17,10 @@ const members = (characters = [], action) => {
             return characters.filter(character => {
                 return character !== action.name.toLowerCase();
             });
+        case CLEAR_TEAM:
+            return [];
         default:
-            return characters
+            return characters;
     }
 };
 

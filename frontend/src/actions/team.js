@@ -9,6 +9,7 @@ export const REMOVE_MEMBER = "REMOVE_MEMBER";
 export const SET_TEAM_MESSAGES = "SET_TEAM_MESSAGES";
 export const SET_LEVEL_RANGE = "SET_LEVEL_RANGE";
 export const SET_TEAM_LOADING = "SET_TEAM_LOADING";
+export const CLEAR_TEAM = "CLEAR_TEAM";
 
 export const setTeamLoading = loading => ({
     type: SET_TEAM_LOADING,
@@ -23,6 +24,10 @@ export const addMember = name => ({
 export const removeMember = name => ({
     type: REMOVE_MEMBER,
     name
+});
+
+export const clearTeam = () => ({
+    type: CLEAR_TEAM,
 });
 
 export const setTeamMessages = messages => ({
@@ -78,10 +83,11 @@ export const fetchTeamMember = name => (dispatch, getState) => {
                         } else {
                             alert(`character ${name} not found`);
                         }
-                        dispatch(setTeamLoading(false));
                     })
                     .catch((error) => {
                         alert(`error while fetching character ${name} data`);
+                    })
+                    .then(() => {
                         dispatch(setTeamLoading(false));
                     });
             } else {
