@@ -71,7 +71,7 @@ const TeamCandidates = ({levelRange, loading, candidates}) => {
         sorcerers = filterVocationAndLevel(candidates, VOCATION.SORCERER, levelRange[0], levelRange[1]);
     }
     return (
-        <div className="border rounded">
+        <div className="border rounded mt-2 mt-md-0">
             <div className="m-2">
                 <h4>Team candidates</h4>
                 {loading ?
