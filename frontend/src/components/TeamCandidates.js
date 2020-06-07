@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {hasPromotion, VOCATION} from "../model/character";
 import {fetchCharacter} from "../actions/characters";
 import {addButton, clipboardButton, infoButton} from "../model/buttons";
+import {fetchTeamMember} from "../actions/team";
 
 const filterVocationAndLevel = (characters, vocation, levelMin, levelMax) => {
     return characters.filter((character) => {
@@ -14,7 +15,7 @@ const filterVocationAndLevel = (characters, vocation, levelMin, levelMax) => {
     });
 };
 
-const VocationList = ({characters, fetchCharacter}) => {
+let VocationList = ({characters, fetchCharacter, addToTeam}) => {
     return (
         <table className="w-100 mb-4">
             <tbody>
@@ -32,13 +33,13 @@ const VocationList = ({characters, fetchCharacter}) => {
                             {character.vocation}
                         </td>
                         <td>
-                            <div className="mx-2 d-inline-block" onClick={() => alert()}>
+                            <div className="mx-2 d-inline-block float-right" onClick={() => addToTeam(character.name)}>
                                 {addButton}
                             </div>
-                            <div className="mx-2 d-inline-block" onClick={() => alert()}>
+                            <div className="mx-2 d-inline-block float-right" onClick={() => alert()}>
                                 {clipboardButton}
                             </div>
-                            <div className="mx-2 d-inline-block" onClick={() => fetchCharacter(character.name)}>
+                            <div className="mx-2 d-inline-block float-right" onClick={() => fetchCharacter(character.name)}>
                                 {infoButton}
                             </div>
                         </td>
@@ -49,17 +50,25 @@ const VocationList = ({characters, fetchCharacter}) => {
     )
 };
 
-const TeamCandidates = ({currentWorld, worlds, levelRange, fetchCharacter, loading}) => {
+const mapStateToDispatch = (dispatch) => {
+    return {
+        fetchCharacter: name => dispatch(fetchCharacter(name)),
+        addToTeam: name => dispatch(fetchTeamMember(name))
+    };
+};
+
+VocationList = connect(null, mapStateToDispatch)(VocationList);
+
+const TeamCandidates = ({levelRange, loading, candidates}) => {
     let druids = [];
     let knights = [];
     let paladins = [];
     let sorcerers = [];
-    if (worlds[currentWorld] !== undefined) {
-        const players = worlds[currentWorld].data.players_online;
-        druids = filterVocationAndLevel(players, VOCATION.DRUID, levelRange[0], levelRange[1]);
-        knights = filterVocationAndLevel(players, VOCATION.KNIGHT, levelRange[0], levelRange[1]);
-        paladins = filterVocationAndLevel(players, VOCATION.PALADIN, levelRange[0], levelRange[1]);
-        sorcerers = filterVocationAndLevel(players, VOCATION.SORCERER, levelRange[0], levelRange[1]);
+    if (candidates) {
+        druids = filterVocationAndLevel(candidates, VOCATION.DRUID, levelRange[0], levelRange[1]);
+        knights = filterVocationAndLevel(candidates, VOCATION.KNIGHT, levelRange[0], levelRange[1]);
+        paladins = filterVocationAndLevel(candidates, VOCATION.PALADIN, levelRange[0], levelRange[1]);
+        sorcerers = filterVocationAndLevel(candidates, VOCATION.SORCERER, levelRange[0], levelRange[1]);
     }
     return (
         <div className="border rounded">
@@ -72,16 +81,16 @@ const TeamCandidates = ({currentWorld, worlds, levelRange, fetchCharacter, loadi
                     :
                     null
                 }
-                {currentWorld ?
+                {candidates != null && !loading ?
                     <div>
                         <h5>Druids</h5>
-                        <VocationList characters={druids} fetchCharacter={fetchCharacter}/>
+                        <VocationList characters={druids}/>
                         <h5>Knights</h5>
-                        <VocationList characters={knights} fetchCharacter={fetchCharacter}/>
+                        <VocationList characters={knights}/>
                         <h5>Paladins</h5>
-                        <VocationList characters={paladins} fetchCharacter={fetchCharacter}/>
+                        <VocationList characters={paladins}/>
                         <h5>Sorcerers</h5>
-                        <VocationList characters={sorcerers} fetchCharacter={fetchCharacter}/>
+                        <VocationList characters={sorcerers}/>
                     </div>
                     :
                     null
@@ -92,19 +101,20 @@ const TeamCandidates = ({currentWorld, worlds, levelRange, fetchCharacter, loadi
 };
 
 const mapStateToProps = (state) => {
+    let candidates = null;
+    const worldList = state.worlds.worldList;
+    const currentWorld = state.worlds.currentWorld;
+    if (worldList[currentWorld] !== undefined) {
+        candidates = worldList[currentWorld].data.players_online.filter(
+            (character) => {
+                return !state.team.members.includes(character.name.toLowerCase());
+            });
+    }
     return {
-        currentWorld: state.worlds.currentWorld,
-        worlds: state.worlds.worldList,
+        candidates,
         levelRange: state.team.levelRange,
         loading: state.worlds.loading
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        fetchCharacter: name => dispatch(fetchCharacter(name))
-    };
-};
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(TeamCandidates);
+export default connect(mapStateToProps, null)(TeamCandidates);
