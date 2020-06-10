@@ -39,7 +39,7 @@ class AddTeamMemberForm extends Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         callback: name => {
-            dispatch(fetchTeamMember(name, true))
+            dispatch(fetchTeamMember([name], true))
         }
     }
 };

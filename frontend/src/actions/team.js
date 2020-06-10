@@ -65,35 +65,52 @@ export const validateTeam = () => (dispatch, getState) => {
     dispatch(setTeamMessages(messages));
 };
 
-export const fetchTeamMember = name => (dispatch, getState) => {
+export const fetchTeamMember = (names) => (dispatch, getState) => {
     const state = getState();
     if (!state.team.loading) {
-        name = name.toLowerCase();
-        if (isTeamMember(state.team.members, name)) {
-            alert(`character ${name} is already member of the team`);
-        } else {
-            if (shouldFetch(getState().characters, name)) {
-                dispatch(setTeamLoading(true));
-                axios.get(`https://api.tibiadata.com/v2/characters/${name}.json`)
-                    .then((response) => {
-                        if (characterWasFound(response.data)) {
-                            dispatch(addCharacter(name, response.data.characters));
-                            dispatch(addMember(name));
-                            dispatch(validateTeam());
-                        } else {
-                            alert(`character ${name} not found`);
-                        }
-                    })
-                    .catch((error) => {
-                        alert(`error while fetching character ${name} data`);
-                    })
-                    .then(() => {
-                        dispatch(setTeamLoading(false));
-                    });
+        let namesToFetch = names.filter((name) => {
+            if (isTeamMember(state.team.members, name)) {
+                alert(`character ${name} is already member of the team`);
+                return false;
+            } else if (shouldFetch(state.characters, name)) {
+                return true;
             } else {
                 dispatch(addMember(name));
                 dispatch(validateTeam());
+                return false;
             }
+        });
+
+        const requests = namesToFetch.map((name) => {
+            return axios.get(`https://api.tibiadata.com/v2/characters/${name}.json`);
+        });
+
+        if (requests.length > 0) {
+            dispatch(setTeamLoading(true));
+            axios.all(requests)
+                .then(axios.spread((...responses) => {
+                    const notFound = [];
+                    for (const r in responses) {
+                        const response = responses[r];
+                        const name = namesToFetch[r];
+                        if (characterWasFound(response.data)) {
+                            dispatch(addCharacter(name.toLowerCase(), response.data.characters));
+                            dispatch(addMember(response.data.characters.data.name));
+                        } else {
+                            notFound.push(name);
+                        }
+                    }
+                    if (notFound.length > 0) {
+                        alert(`${notFound.join(", ")} not found`);
+                    }
+                    dispatch(validateTeam());
+                }))
+                .catch((errors) => {
+                    alert(`error while fetching characters data`);
+                })
+                .then(() => {
+                    dispatch(setTeamLoading(false));
+                })
         }
     }
 };

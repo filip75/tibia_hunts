@@ -17,48 +17,43 @@ const filterVocationAndLevel = (characters, vocation, levelMin, levelMax) => {
 
 let VocationList = ({characters, fetchCharacter, addToTeam}) => {
     return (
-        <table className="w-100 mb-4">
-            <tbody>
-            {characters.map((character) => {
-                return (
-                    <tr key={character.name}
-                        className={`border rounded ${!hasPromotion(character.vocation) ? "text-muted" : null}`}>
-                        <td>
-                            {character.name}
-                        </td>
-                        <td>
-                            {character.level}
-                        </td>
-                        <td>
-                            {character.vocation}
-                        </td>
-                        <td>
-                            <div data-toggle="tooltip" title="Add to team"
-                                 className="hover mx-2 d-inline-block float-right"
-                                 onClick={() => addToTeam(character.name)}>
-                                {addButton}
-                            </div>
-                            <div data-toggle="tooltip" title="Copy name"
-                                 className="hover mx-2 d-inline-block float-right" onClick={() => alert()}>
-                                {clipboardButton}
-                            </div>
-                            <div data-toggle="tooltip" title="Show more info"
-                                 className="hover mx-2 d-inline-block float-right"
-                                 onClick={() => fetchCharacter(character.name)}>
+        characters.map((character) => {
+            return (
+                <div key={character.name}
+                     className={`border rounded mb-1 ${!hasPromotion(character.vocation) ? "text-muted" : "text-dark"}`}>
+                    <div className="row justify-content-between px-1">
+                        <div className="d-inline-block">{character.name}</div>
+                        <div className="ml-auto mr-0">{character.level}</div>
+                    </div>
+                    <div className="row justify-content-end px-1">
+                        <div data-toggle="tooltip" title="Add to team"
+                             className="hover d-inline-block"
+                             onClick={() => addToTeam(character.name)}>
+                            {addButton}
+                        </div>
+                        <div data-toggle="tooltip" title="Copy name"
+                             className="hover d-inline-block mx-2" onClick={() => alert()}>
+                            {clipboardButton}
+                        </div>
+                        <div data-toggle="tooltip" title="Show on tibia.com"
+                             className="hover d-inline-block text">
+                            <a className={`${hasPromotion(character.vocation) ? "text-dark" : "text-muted"}`}
+                               href={`https://www.tibia.com/community/?subtopic=characters&name=${character.name}`}
+                               target="_blank" rel="noopener noreferrer">
                                 {infoButton}
-                            </div>
-                        </td>
-                    </tr>)
-            })}
-            </tbody>
-        </table>
-    )
+                            </a>
+                        </div>
+                    </div>
+                </div>)
+        })
+
+    );
 };
 
 const mapStateToDispatch = (dispatch) => {
     return {
         fetchCharacter: name => dispatch(fetchCharacter(name)),
-        addToTeam: name => dispatch(fetchTeamMember(name))
+        addToTeam: name => dispatch(fetchTeamMember([name]))
     };
 };
 
@@ -66,7 +61,7 @@ VocationList = connect(null, mapStateToDispatch)(VocationList);
 
 const TeamCandidates = ({levelRange, loading, candidates}) => {
     return (
-        <div className="border rounded mt-2 mt-md-0">
+        <div className="mt-2 mt-md-0">
             <div className="m-2">
                 <h4>Team candidates</h4>
                 {loading ?
@@ -77,16 +72,12 @@ const TeamCandidates = ({levelRange, loading, candidates}) => {
                     null
                 }
                 {candidates != null && !loading ?
-                    <div>
+                    <div className="row">
                         {Object.values(VOCATION).map((vocation) => {
                             return (
-                                <div>
-                                    <h5 className="text-capitalize">
+                                <div className="col-md" key={vocation}>
+                                    <h5 className="text-capitalize sticky-top bg-white border rounded py-2 text-center">
                                         {`${vocation}s`}
-                                        <span className="hover vocationToggle text-secondary ml-2"
-                                              data-toggle="collapse"
-                                              data-target={`#${vocation}`}> toggle
-                                        </span>
                                     </h5>
                                     <div id={vocation} className="collapse show">
                                         <VocationList
